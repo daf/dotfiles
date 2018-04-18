@@ -71,6 +71,8 @@ Plug 'kien/ctrlp.vim'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'mhinz/vim-signify'
 Plug 'bling/vim-airline'
+Plug 'prettier/vim-prettier', { 'do': 'yarn install', 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue'] }
+Plug 'severin-lemaignan/vim-minimap'
 
 call plug#end()
 " }}}
