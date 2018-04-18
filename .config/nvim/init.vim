@@ -25,9 +25,10 @@ Plug 'vim-scripts/sift'
 Plug 'tstelzer/welpe.vim'
 Plug 'ipsod/nes.vim'
 Plug 'zandrmartin/vim-distill'
-Plug 'dracula/vim'
+Plug 'dracula/vim', { 'name': 'dracula' }
 Plug 'baskerville/bubblegum'
 Plug 'daylerees/colour-schemes', { 'rtp': 'vim' }
+Plug 'rainglow/vim', { 'name': 'rainglow' }
 Plug 'MvanDiemen/ghostbuster'
 Plug 'encody/vim-colors', { 'name': 'lyla-colors' }
 Plug 'owickstrom/vim-colors-paramount'
@@ -49,6 +50,7 @@ Plug 'sts10/vim-mustard'
 Plug 'archSeer/colibri.vim'
 Plug 'trevordmiller/nova-vim'
 Plug 'fenetikm/falcon'
+Plug 'NerdyPepper/agila.vim'
 
 " File support
 Plug 'ekalinin/Dockerfile.vim'
