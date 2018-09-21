@@ -51,9 +51,15 @@ Plug 'archSeer/colibri.vim'
 Plug 'trevordmiller/nova-vim'
 Plug 'fenetikm/falcon'
 Plug 'NerdyPepper/agila.vim'
+Plug 'KKPMW/sacredforest-vim'
+Plug 'tjammer/blayu.vim'
+Plug 'rakr/vim-two-firewatch'
+Plug 'atelierbram/Base2Tone-vim'
 
 " File support
 Plug 'ekalinin/Dockerfile.vim'
+Plug 'posva/vim-vue'
+Plug 'digitaltoad/vim-pug'
 
 " Behavior
 Plug 'tpope/vim-fugitive'
@@ -73,6 +79,10 @@ Plug 'mhinz/vim-signify'
 Plug 'bling/vim-airline'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install', 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue'] }
 Plug 'severin-lemaignan/vim-minimap'
+Plug 'janko-m/vim-test'
+Plug 'benmills/vimux'
+Plug 't9md/vim-quickhl'
+Plug 'RRethy/vim-illuminate'
 
 call plug#end()
 " }}}
@@ -109,7 +119,16 @@ endif
 
 " binds
 map <F9> :NERDTreeToggle
-let g:NERDTreeQuitOnOpen = 1
+noremap <Leader>bd :Bclose<CR>  " close buffer (butane)
+nmap <silent> <Leader>t :TestNearest<CR>
+nmap <silent> <Leader>T :TestFile<CR>
+nmap <silent> <Leader>a :TestSuite<CR>
+nmap <silent> <Leader>l :TestLast<CR>
+nmap <silent> <Leader>g :TestVisit<CR>
+nmap <Leader>m <Plug>(quickhl-manual-this)
+vmap <Leader>m <Plug>(quickhl-manual-this)
+nmap <Leader>M <Plug>(quickhl-manual-reset)
+vmap <Leader>M <Plug>(quickhl-manual-reset)
 
 " line length for git commit messages
 autocmd FileType gitcommit set colorcolumn=73
@@ -122,4 +141,15 @@ autocmd Syntax * syn match ExtraWhitespace /\s\+$\| \+\ze\t/
 " ctrl+p options
 let g:ctrlp_map='<Leader>p'
 let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files', 'find %s -type f']
+
+" nerdtree options
+let g:NERDTreeQuitOnOpen = 1
+
+" test options
+let test#strategy='vimux'
+let test#python#runner = 'pytest'
+
+" python
+let g:python3_host_prog='/home/daf/miniconda3/envs/nvim/bin/python'
+let g:python_host_prog='/home/daf/miniconda3/envs/nvim/bin/python'
 
