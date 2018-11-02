@@ -55,6 +55,7 @@ Plug 'KKPMW/sacredforest-vim'
 Plug 'tjammer/blayu.vim'
 Plug 'rakr/vim-two-firewatch'
 Plug 'atelierbram/Base2Tone-vim'
+Plug 'metalelf0/base16-black-metal-scheme'
 
 " File support
 Plug 'ekalinin/Dockerfile.vim'
