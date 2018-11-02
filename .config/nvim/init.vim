@@ -68,6 +68,7 @@ Plug 'tpope/vim-ragtag'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-jdaddy'
 Plug 'tpope/vim-obsession'
+Plug 'embear/vim-localvimrc'
 
 " IDEish
 Plug 'mileszs/ack.vim'
@@ -98,14 +99,11 @@ set hidden      " allows undo buffers to remain after switching back/forth
 set splitbelow  " direction of split opens
 set splitright  " "
 
-" per project settings
-set exrc
-set secure
-
-" space/tabs
 set expandtab
-set shiftwidth=4
-set tabstop=4
+set shiftwidth=2
+set tabstop=2
+set listchars=tab:→\ ,extends:»,precedes:«,nbsp:·,trail:·
+set showbreak=↪\
 
 set termguicolors
 colors distill
@@ -152,4 +150,9 @@ let test#python#runner = 'pytest'
 " python
 let g:python3_host_prog='/home/daf/miniconda3/envs/nvim/bin/python'
 let g:python_host_prog='/home/daf/miniconda3/envs/nvim/bin/python'
+
+" localvimrc options
+let g:localvimrc_persistent=2
+let g:localvimrc_persistence_file='$HOME/.local/share/nvim/.localvimrcpersistence'
+let g:localvimrc_whitelist='/home/daf/dev/.*'
 
