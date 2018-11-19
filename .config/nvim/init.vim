@@ -56,11 +56,13 @@ Plug 'tjammer/blayu.vim'
 Plug 'rakr/vim-two-firewatch'
 Plug 'atelierbram/Base2Tone-vim'
 Plug 'metalelf0/base16-black-metal-scheme'
+Plug 'agreco/vim-citylights'
 
 " File support
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'posva/vim-vue'
 Plug 'digitaltoad/vim-pug'
+Plug 'pangloss/vim-javascript'
 
 " Behavior
 Plug 'tpope/vim-fugitive'
@@ -85,6 +87,7 @@ Plug 'janko-m/vim-test'
 Plug 'benmills/vimux'
 Plug 't9md/vim-quickhl'
 Plug 'RRethy/vim-illuminate'
+Plug 'biskark/vim-ultimate-colorscheme-utility'
 
 call plug#end()
 " }}}
@@ -105,6 +108,9 @@ set shiftwidth=2
 set tabstop=2
 set listchars=tab:→\ ,extends:»,precedes:«,nbsp:·,trail:·
 set showbreak=↪\
+
+set undofile
+set undodir=~/.local/share/nvim/undo
 
 set termguicolors
 colors distill
