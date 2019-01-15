@@ -57,6 +57,10 @@ Plug 'rakr/vim-two-firewatch'
 Plug 'atelierbram/Base2Tone-vim'
 Plug 'metalelf0/base16-black-metal-scheme'
 Plug 'agreco/vim-citylights'
+Plug 'caksoylar/vim-mysticaltutor'
+Plug 'Nequo/vim-allomancer'
+Plug 'qqwaszxxx/vim-battlestation'
+Plug 'oka-h/yozakura.vim'
 
 " File support
 Plug 'ekalinin/Dockerfile.vim'
@@ -76,7 +80,6 @@ Plug 'embear/vim-localvimrc'
 " IDEish
 Plug 'mileszs/ack.vim'
 Plug 'thisivan/vim-bufexplorer'
-Plug 'scrooloose/nerdtree'
 Plug 'kien/ctrlp.vim'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'mhinz/vim-signify'
@@ -88,6 +91,7 @@ Plug 'benmills/vimux'
 Plug 't9md/vim-quickhl'
 Plug 'RRethy/vim-illuminate'
 Plug 'biskark/vim-ultimate-colorscheme-utility'
+Plug 'tpope/vim-vinegar'
 
 call plug#end()
 " }}}
@@ -123,7 +127,6 @@ if !has('gui_running')
 endif
 
 " binds
-map <F9> :NERDTreeToggle
 noremap <Leader>bd :Bclose<CR>  " close buffer (butane)
 nmap <silent> <Leader>t :TestNearest<CR>
 nmap <silent> <Leader>T :TestFile<CR>
@@ -146,9 +149,6 @@ autocmd Syntax * syn match ExtraWhitespace /\s\+$\| \+\ze\t/
 " ctrl+p options
 let g:ctrlp_map='<Leader>p'
 let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files', 'find %s -type f']
-
-" nerdtree options
-let g:NERDTreeQuitOnOpen = 1
 
 " test options
 let test#strategy='vimux'
