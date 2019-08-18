@@ -39,6 +39,8 @@ Plug 'iceisspetrel/Monrovia'
 Plug 'AlessandroYorba/Despacio'
 Plug 'AlessandroYorba/Sierra'
 Plug 'AlessandroYorba/Alduin'
+Plug 'AlessandroYorba/Breve'
+Plug 'AlessandroYorba/Arcadia'
 Plug 'w0ng/vim-hybrid'
 Plug 'rakr/vim-one'
 Plug 'lu-ren/SerialExperimentsLain'
@@ -61,12 +63,38 @@ Plug 'caksoylar/vim-mysticaltutor'
 Plug 'Nequo/vim-allomancer'
 Plug 'qqwaszxxx/vim-battlestation'
 Plug 'oka-h/yozakura.vim'
+Plug 'tyrannicaltoucan/vim-quantum'
+Plug 'jonathanfilip/vim-lucius'
+Plug 'jpo/vim-railscasts-theme'
+Plug 'smallwat3r/vim-hashpunk-sw'
+Plug 'beikome/cosme.vim'
+Plug 'DankNeon/vim', { 'name': 'dank-neon' }
+Plug 'nightsense/cosmic_latte'
+Plug 'cseelus/vim-colors-tone'
+Plug 'haishanh/night-owl.vim'
+Plug 'ntk148v/vim-horizon'
+Plug 'chase/focuspoint-vim'
+Plug 'itchyny/landscape.vim'
+Plug 'jaredgorski/SpaceCamp'
+Plug 'Rigellute/shades-of-purple.vim'
+Plug 'smallwat3r/vim-mono-sw'
+Plug 'NLKNguyen/papercolor-theme'
+Plug 'NerdyPepper/vim-colors-plain'
+Plug 'balanceiskey/vim-framer-syntax'
+Plug 'vim-scripts/oceandeep'
+Plug 'srcery-colors/srcery-vim'
+Plug 'Rigellute/rigel'
+Plug 'hauleth/blame.vim'
+Plug 'tpozzi/Sidonia'
+Plug 'vim-scripts/TaQua'
+Plug 'matveyt/vim-modest'
 
 " File support
-Plug 'ekalinin/Dockerfile.vim'
-Plug 'posva/vim-vue'
-Plug 'digitaltoad/vim-pug'
-Plug 'pangloss/vim-javascript'
+"Plug 'ekalinin/Dockerfile.vim'
+"Plug 'posva/vim-vue'
+"Plug 'digitaltoad/vim-pug'
+"Plug 'pangloss/vim-javascript'
+Plug 'sheerun/vim-polyglot'
 
 " Behavior
 Plug 'tpope/vim-fugitive'
@@ -76,6 +104,7 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-jdaddy'
 Plug 'tpope/vim-obsession'
 Plug 'embear/vim-localvimrc'
+Plug 'michaeljsmith/vim-indent-object'
 
 " IDEish
 Plug 'mileszs/ack.vim'
@@ -84,6 +113,7 @@ Plug 'kien/ctrlp.vim'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'mhinz/vim-signify'
 Plug 'bling/vim-airline'
+Plug 'chase/vim-airline-focuspoint'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install', 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue'] }
 Plug 'severin-lemaignan/vim-minimap'
 Plug 'janko-m/vim-test'
@@ -92,6 +122,9 @@ Plug 't9md/vim-quickhl'
 Plug 'RRethy/vim-illuminate'
 Plug 'biskark/vim-ultimate-colorscheme-utility'
 Plug 'tpope/vim-vinegar'
+Plug 'w0rp/ale'
+Plug 'junegunn/goyo.vim'
+Plug 'thiagoalessio/rainbow_levels.vim'
 
 call plug#end()
 " }}}
@@ -119,12 +152,21 @@ set undodir=~/.local/share/nvim/undo
 set termguicolors
 colors distill
 
+" SECURITY
+" https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
+set modelines=0
+set nomodeline
+
 " mouse/terminal
 if !has('gui_running')
     set mouse=a
     set mousemodel=popup
     set termencoding=utf-8
 endif
+
+" splits
+set fillchars=vert:┃ " for vsplits
+set fillchars+=fold:· " for folds
 
 " binds
 noremap <Leader>bd :Bclose<CR>  " close buffer (butane)
@@ -163,3 +205,13 @@ let g:localvimrc_persistent=2
 let g:localvimrc_persistence_file='$HOME/.local/share/nvim/.localvimrcpersistence'
 let g:localvimrc_whitelist='/home/daf/dev/.*'
 
+" ultimate colorscheme options (custom, don't change on enter)
+let g:ulti_color_always_random=3
+
+" ale
+let b:ale_linters = {'python': ['flake8']}
+let g:ale_python_flake8_options = "--ignore E265,E501,E124,E203,E221"
+let b:ale_fixers = {'python': ['black']}
+
+" polyglot options
+let g:polyglot_disabled = ['org']
