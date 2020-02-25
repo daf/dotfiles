@@ -88,6 +88,11 @@ Plug 'hauleth/blame.vim'
 Plug 'tpozzi/Sidonia'
 Plug 'vim-scripts/TaQua'
 Plug 'matveyt/vim-modest'
+Plug 'gertjanreynaert/cobalt2-vim-theme'
+Plug 'maslaral/the-creator.vim'
+Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
+Plug 'flrnprz/candid.vim'
+Plug 'arzg/vim-corvine'
 
 " File support
 "Plug 'ekalinin/Dockerfile.vim'
