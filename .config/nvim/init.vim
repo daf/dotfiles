@@ -93,6 +93,7 @@ Plug 'maslaral/the-creator.vim'
 Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
 Plug 'flrnprz/candid.vim'
 Plug 'arzg/vim-corvine'
+Plug 'skbolton/embark'
 
 " File support
 "Plug 'ekalinin/Dockerfile.vim'
@@ -100,6 +101,8 @@ Plug 'arzg/vim-corvine'
 "Plug 'digitaltoad/vim-pug'
 "Plug 'pangloss/vim-javascript'
 Plug 'sheerun/vim-polyglot'
+Plug 'peitalin/vim-jsx-typescript'
+Plug 'leafgarland/typescript-vim'
 
 " Behavior
 Plug 'tpope/vim-fugitive'
@@ -110,6 +113,7 @@ Plug 'tpope/vim-jdaddy'
 Plug 'tpope/vim-obsession'
 Plug 'embear/vim-localvimrc'
 Plug 'michaeljsmith/vim-indent-object'
+Plug 'mattn/emmet-vim'
 
 " IDEish
 Plug 'mileszs/ack.vim'
@@ -155,7 +159,7 @@ set undofile
 set undodir=~/.local/share/nvim/undo
 
 set termguicolors
-colors distill
+colors badwolf
 
 " SECURITY
 " https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
@@ -217,6 +221,34 @@ let g:ulti_color_always_random=3
 let b:ale_linters = {'python': ['flake8']}
 let g:ale_python_flake8_options = "--ignore E265,E501,E124,E203,E221"
 let b:ale_fixers = {'python': ['black']}
+
+
+" https://www.lucasfcosta.com/2019/02/10/terminal-guide-2019.html
+" fix files on save
+" let g:ale_fix_on_save = 1
+"
+" lint after 1000ms after changes are made both on insert mode and normal mode
+let g:ale_lint_on_text_changed = 'always'
+let g:ale_lint_delay = 1000
+
+" use nice symbols for errors and warnings
+let g:ale_sign_warning = '⚠'
+let g:ale_sign_error = "◉"
+
+" " fixer configurations
+" let g:ale_fixers = {
+" \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+" \}
+
+" make emmet behave well with JSX in JS and TS files
+let g:user_emmet_settings = {
+\  'javascript' : {
+\      'extends' : 'jsx',
+\  },
+\  'typescript' : {
+\      'extends' : 'tsx',
+\  },
+\}
 
 " polyglot options
 let g:polyglot_disabled = ['org']
