@@ -18,6 +18,10 @@ import XMonad.Layout.Tabbed
 import XMonad.Layout.Gaps
 import XMonad.Layout.Spacing
 import XMonad.Layout.DwmStyle
+import XMonad.Layout.ThreeColumns
+import XMonad.Layout.OneBig
+import XMonad.Layout.ZoomRow
+import XMonad.Layout.PerScreen
 --import XMonad.Layout.GridVariants
 import XMonad.Layout.HintedGrid
 import Data.Ratio
@@ -54,22 +58,24 @@ normalBorderColor'  = "#000000"
 focusedBorderColor' = "#3696ef"
 
 
-defaultGaps' :: [(Int,Int,Int,Int)]
-defaultGaps' = [(15,0,0,0), (15,0,0,0)] -- 15 for default dzen font
+defaultGaps' :: GapSpec
+defaultGaps' = [(L, 0), (R, 0)]
+gapsOn' :: GapSpec
+gapsOn' = [(L, 400), (R, 400)] --, (D, 10) (L, 10)]
+
+windowSpacing = spacingRaw False (Border 0 0 0 0) False (Border 5 5 5 5) True
 
 terminal' :: String
 terminal' = "gnome-terminal"
-
 
 keys' :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
 keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     -- launching and killing programs
     [ ((modMask .|. shiftMask, xK_t), spawn $ XMonad.terminal conf) -- %! Launch terminal
     --, ((modMask,               xK_p     ), spawn "exe=`dmenu_path | dmenu` && eval \"exec $exe\"") -- %! Launch dmenu
-    , ((modMask,               xK_r     ), spawn "gmrun") -- %! Launch gmrun
+    , ((modMask,               xK_r     ), spawn "rofi -show run") -- %! Launch rofi
     , ((modMask .|. shiftMask, xK_c     ), kill) -- %! Close the focused window
-    , ((modMask .|. shiftMask, xK_s), spawn "gnome-terminal -x ssh l3ib.org") -- %! Launch ssh to l3ib
-    , ((modMask .|. shiftMask, xK_y), spawn "chromium-browser") -- %! Launch browser
+    , ((modMask .|. shiftMask, xK_y), spawn "firefox") -- %! Launch browser
 
     , ((modMask,               xK_space ), sendMessage NextLayout) -- %! Rotate through the available layout algorithms
     , ((modMask .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf) -- %!  Reset the layouts on the current workspace to default
@@ -92,6 +98,12 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask,               xK_l     ), sendMessage Expand) -- %! Expand the master area
     -- , ((modMask .|. shiftMask, xK_m     ), sendMessage $ XMonad.Layout.MultiToggle.Toggle MAGNIFICATION) -- %! Magnify anything?
     , ((modMask,               xK_m     ), sendMessage $ XMonad.Layout.MultiToggle.Toggle MIRROR)
+    , ((modMask,               xK_equal ), sendMessage $ ModifyGaps gaptoggler)
+
+    -- , ((modMask .|. shiftMask, xK_h     ), sendMessage zoomIn)
+    -- , ((modMask .|. shiftMask, xK_l     ), sendMessage zoomOut)
+    -- , ((modMask              , xK_o     ), sendMessage ZoomFullToggle)
+    -- , ((modMask .|. shiftMask, xK_o     ), sendMessage zoomReset)
 
     -- floating layer support
     , ((modMask,               xK_t     ), withFocused $ windows . W.sink) -- %! Push window back into tiling
@@ -103,7 +115,7 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask              , xK_period), sendMessage (IncMasterN (-1))) -- %! Deincrement the number of windows in the master area
 
     -- toggle the status bar gap
---    , ((modMask              , xK_b     ), modifyGap (\i n -> let x = (XMonad.defaultGaps conf ++ repeat (0,0,0,0)) !! i in if n == x then (0,0,0,0) else x)) -- %! Toggle the status bar gap
+    --    , ((modMask              , xK_b     ), modifyGap (\i n -> let x = (defaultGaps' conf ++ repeat (0,0,0,0)) !! i in if n == x then (0,0,0,0) else x)) -- %! Toggle the status bar gap
     , ((modMask              , xK_minus ), viewEmptyWorkspace)
     , ((modMask .|. shiftMask, xK_minus ), tagToEmptyWorkspace)
 
@@ -123,6 +135,9 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     [((m .|. modMask, key), screenWorkspace sc >>= flip whenJust (windows . f))
         | (key, sc) <- zip [xK_bracketright, xK_bracketleft] [0..]
         , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
+
+    where
+      gaptoggler curGap = if curGap == defaultGaps' then gapsOn' else defaultGaps' 
 
 
 myDWConfig :: Theme
@@ -181,29 +196,37 @@ instance LayoutClass Roof a where
 
 myLayoutHook = avoidStruts
                $ hints
-               $ (noFrillsDeco shrinkText myDWConfig
-               $ (mkToggle (single MIRROR)
+               $ windowSpacing
                -- $ mkToggle (single MAGNIFICATION)
-               $ (spacing 0 $ (Mirror tiled) ||| grido)))
-               ||| tabbed shrinkText myDWConfig ||| stackertile ||| accordo ||| roofer
+               $ (mkToggle (single MIRROR)
+                 $ ifWider 1280 (
+                   gaps defaultGaps'
+                   $ threecol ||| tiled ||| onale
+                )
+                stackertile
+               )
     where
       hints = layoutHints
-      mtiled = centerMaster $ (Mirror tiled)
+--      mtiled = centerMaster $ (Mirror tiled)
       tiled = Tall nmaster delta ratio
       nmaster = 1
       delta = 3/100
       ratio = 10/16
-      magnify = magnifiercz (12%10)
-      rmagnify = magnifiercz (10%12)
-      twopane = TwoPane (3/100) (1/2)
-      stackertile = StackTile 1 (3/100) (2/3)
+      space = 10
+--      magnify = magnifiercz (12%10)
+--      rmagnify = magnifiercz (10%12)
+--      twopane = TwoPane (3/100) (1/2)
+      stackertile = StackTile nmaster delta ratio
 --      grido = SplitGrid XMonad.Layout.GridVariants.L 1 2 (2/3) (16/10) (5/100)
 --      grido = Grid (16/10)
-      grido = centerMaster $ Grid True
-      drawer = simpleDrawer 0.01 0.3 (ClassName "Empathy")
-      dishes = Dishes 1 (1/8)
-      accordo = noFrillsDeco shrinkText myDWConfig (AccordStack (decoHeight myDWConfig))
-      roofer = noFrillsDeco shrinkText myDWConfig (Roof (decoHeight myDWConfig))
+--      grido = centerMaster $ Grid True
+--      drawer = simpleDrawer 0.01 0.3 (ClassName "Empathy")
+--      dishes = Dishes 1 (1/8)
+--      accordo = noFrillsDeco shrinkText myDWConfig (AccordStack (decoHeight myDWConfig))
+--      roofer = noFrillsDeco shrinkText myDWConfig (Roof (decoHeight myDWConfig))
+      threecol = ThreeCol 1 (3/100) (1/2)
+      onale = OneBig (10/16) (10/16)
+--      zoomer = zoomRow
 
 myManageHook = composeAll
     [ manageDocks
@@ -213,11 +236,17 @@ myManageHook = composeAll
      ,className =? "Eog" --> doFloat
      ,className =? "Visiblity.py" --> doIgnore
      ,className =? "Unity-2d-panel" --> doIgnore
-     ,className =? "Unity-2d-shell" --> doIgnore ]
+     ,className =? "Unity-2d-shell" --> doIgnore
+     ,className =? "Xmessage" --> doFloat
+     ,className =? "Git-gui" --> doFloat
+    ]
 
-main =
+
+main = do
+    xmproc <- spawnPipe "xmobar"
+
     xmonad $ gnomeConfig
-    {
+      {
         workspaces = withScreens 2 ["a","b","c","d","e","f","g","h","i"],
         manageHook = myManageHook <+> manageHook gnomeConfig,
         modMask = modMask',
@@ -225,8 +254,12 @@ main =
         normalBorderColor = normalBorderColor',
         focusedBorderColor = focusedBorderColor',
         layoutHook = myLayoutHook,
-        --defaultGaps = defaultGaps',
+        logHook = dynamicLogWithPP xmobarPP
+          { ppOutput = hPutStrLn xmproc
+          , ppTitle = xmobarColor "green" "" . shorten 50
+          },
+        --defaultGaps = defaultGaps','
         terminal = terminal',
         keys = keys'
-    }
+      }
 
