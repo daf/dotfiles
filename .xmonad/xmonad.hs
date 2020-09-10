@@ -44,6 +44,10 @@ import XMonad.Layout.TwoPane
 import XMonad.Layout.StackTile
 import XMonad.Actions.FloatKeys
 
+import qualified DBus as D
+import qualified DBus.Client as D
+import qualified Codec.Binary.UTF8.String as UTF8
+
 -- workspaces' :: [WorkspaceId]
 -- workspaces' =  ["a", "b", "c", "d", "e", "f", "g", "h", "i"]
 
@@ -241,9 +245,24 @@ myManageHook = composeAll
      ,className =? "Git-gui" --> doFloat
     ]
 
+myLogHook :: D.Client -> PP
+myLogHook dbus = def { ppOutput = dbusOutput dbus }
+
+dbusOutput :: D.Client -> String -> IO ()
+dbusOutput dbus str = do
+    let signal = (D.signal objectPath interfaceName memberName) {
+        D.signalBody = [D.toVariant $ UTF8.decodeString str]
+      }
+    D.emit dbus signal
+  where
+    objectPath = D.objectPath_ "/org/xmonad/Log"
+    interfaceName = D.interfaceName_ "org.xmonad.Log"
+    memberName = D.memberName_ "Update"
 
 main = do
-    xmproc <- spawnPipe "xmobar"
+    dbus <- D.connectSession
+    D.requestName dbus (D.busName_ "org.xmonad.Log")
+      [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
 
     xmonad $ gnomeConfig
       {
@@ -254,10 +273,7 @@ main = do
         normalBorderColor = normalBorderColor',
         focusedBorderColor = focusedBorderColor',
         layoutHook = myLayoutHook,
-        logHook = dynamicLogWithPP xmobarPP
-          { ppOutput = hPutStrLn xmproc
-          , ppTitle = xmobarColor "green" "" . shorten 50
-          },
+        logHook = dynamicLogWithPP (myLogHook dbus),
         --defaultGaps = defaultGaps','
         terminal = terminal',
         keys = keys'
