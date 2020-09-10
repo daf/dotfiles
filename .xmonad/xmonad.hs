@@ -1,12 +1,12 @@
 -- {-# OPTIONS_GHC -fglasgow-exts #-} -- required for XMonad.Layout.MultiToggle
 {-# LANGUAGE FlexibleInstances, MultiParamTypeClasses #-}
 import XMonad
-import XMonad.Layout.CenteredMaster
+-- import XMonad.Layout.CenteredMaster
 import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.EwmhDesktops
+-- import XMonad.Hooks.EwmhDesktops
 import XMonad.Util.Run (spawnPipe)
 import System.IO (hPutStrLn)
-import XMonad.Layout.Accordion
+import XMonad.Layout.Accordion()
 import XMonad.Layout.Circle
 import XMonad.Layout.Roledex
 import XMonad.Layout.Dishes
@@ -22,15 +22,16 @@ import XMonad.Layout.ThreeColumns
 import XMonad.Layout.OneBig
 import XMonad.Layout.ZoomRow
 import XMonad.Layout.PerScreen
+import XMonad.Layout.MultiColumns
 --import XMonad.Layout.GridVariants
-import XMonad.Layout.HintedGrid
+import XMonad.Layout.Grid
 import Data.Ratio
 import XMonad.Layout.Drawer
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map as M
 import System.Exit
-import Graphics.X11.Xlib
+-- import Graphics.X11.Xlib
 import XMonad.Layout.LayoutHints
 import XMonad.Actions.UpdatePointer
 import XMonad.Hooks.ManageDocks
@@ -111,8 +112,8 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 
     -- floating layer support
     , ((modMask,               xK_t     ), withFocused $ windows . W.sink) -- %! Push window back into tiling
-    , ((modMask,               xK_d     ), withFocused $ keysResizeWindow (-50,-50) (1,1)) -- %! shrink window
-    , ((modMask,               xK_s     ), withFocused $ keysResizeWindow (50,50) (1,1)) -- %! biggen window
+    , ((modMask,               xK_d     ), withFocused (keysResizeWindow ((-50),(-50)) (1,1))) -- %! shrink window
+    , ((modMask,               xK_s     ), withFocused (keysResizeWindow (50,50) (1,1))) -- %! biggen window
 
     -- increase or decrease number of windows in the master area
     , ((modMask              , xK_comma ), sendMessage (IncMasterN 1)) -- %! Increment the number of windows in the master area
@@ -144,59 +145,59 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
       gaptoggler curGap = if curGap == defaultGaps' then gapsOn' else defaultGaps' 
 
 
-myDWConfig :: Theme
-myDWConfig = defaultTheme { inactiveBorderColor =  "black"
-                          , inactiveColor       =  "#666666"
-                          , inactiveTextColor   =  "black"
-                          , activeBorderColor   =  "#3696ef"
-                          , activeColor         =  "#285577"
-                          , activeTextColor     =  "#ffffff"
-                          , fontName            =  "xft:Consolas-8"
-                          }
+-- myDWConfig :: Theme
+-- myDWConfig = defaultTheme { inactiveBorderColor =  "black"
+--                           , inactiveColor       =  "#666666"
+--                           , inactiveTextColor   =  "black"
+--                           , activeBorderColor   =  "#3696ef"
+--                           , activeColor         =  "#285577"
+--                           , activeTextColor     =  "#ffffff"
+--                           , fontName            =  "xft:Consolas-8"
+--                           }
 
 -- data MAGNIFICATION = MAGNIFICATION deriving (Read, Show, Eq, Typeable)
 -- instance Transformer MAGNIFICATION Window where
 --    transform _ x k = k (magnifiercz 1.2 x)
 
 -- attempt to fill in my own accordion style layout
-data AccordStack a = AccordStack Dimension deriving ( Show, Read  )
-
-instance LayoutClass AccordStack a where
-    pureLayout (AccordStack decoHeight) sc ws = [(W.focus ws, mainRect)] ++ (reverse (zip dns bottoms)) ++ zip ups (reverse tops)
-      where
-        ups = W.up ws
-        dns = W.down ws
-        lups = fromIntegral (length ups)
-        ldns = fromIntegral (length dns)
-        mainRect = Rectangle x my w mh
-        my = y + tdh lups
-        mh = h - tdh (ldns + lups)
-        tops = map topRect $ [0..(lups - 1)]
-        bottoms = map bottomRect $ [0..(ldns - 1)]
-        tdh n = fromIntegral (n * decoHeight)
-        (Rectangle x y w h) = sc
-        topRect n = Rectangle x (y + tdh n) w (h - tdh n)
-        bottomRect n = Rectangle x (y + tdh lups + (fromIntegral mh) + tdh n) w mh
-
-data Roof a = Roof Dimension deriving ( Show, Read )
-
-instance LayoutClass Roof a where
-  pureLayout (Roof decoHeight) sc ws = [(W.focus ws, mainRect)] ++ zip ups (reverse tops) ++ zip dns (reverse bottoms)
-    where
-      ups = W.up ws
-      dns = W.down ws
-      lups = fromIntegral (length ups)
-      ldns = fromIntegral (length dns)
-      mainRect = Rectangle x my w mh
-        where
-          my = y + tdh ldns
-          mh = h - tdh ldns
-      tops = map topRect $ [0..(lups-1)]
-      bottoms = map bottomRect $ [0..(ldns-1)]
-      tdh n = fromIntegral (n * decoHeight)
-      topRect n = Rectangle x (y + tdh (ldns + 1 + n)) w (h - (tdh (ldns + 1 + n)))
-      bottomRect n = Rectangle x (y + tdh n) w (h - tdh n)
-      (Rectangle x y w h) = sc
+-- data AccordStack a = AccordStack Dimension deriving ( Show, Read  )
+-- 
+-- instance LayoutClass AccordStack a where
+--     pureLayout (AccordStack decoHeight) sc ws = [(W.focus ws, mainRect)] ++ (reverse (zip dns bottoms)) ++ zip ups (reverse tops)
+--       where
+--         ups = W.up ws
+--         dns = W.down ws
+--         lups = fromIntegral (length ups)
+--         ldns = fromIntegral (length dns)
+--         mainRect = Rectangle x my w mh
+--         my = y + tdh lups
+--         mh = h - tdh (ldns + lups)
+--         tops = map topRect $ [0..(lups - 1)]
+--         bottoms = map bottomRect $ [0..(ldns - 1)]
+--         tdh n = fromIntegral (n * decoHeight)
+--         (Rectangle x y w h) = sc
+--         topRect n = Rectangle x (y + tdh n) w (h - tdh n)
+--         bottomRect n = Rectangle x (y + tdh lups + (fromIntegral mh) + tdh n) w mh
+-- 
+-- data Roof a = Roof Dimension deriving ( Show, Read )
+-- 
+-- instance LayoutClass Roof a where
+--   pureLayout (Roof decoHeight) sc ws = [(W.focus ws, mainRect)] ++ zip ups (reverse tops) ++ zip dns (reverse bottoms)
+--     where
+--       ups = W.up ws
+--       dns = W.down ws
+--       lups = fromIntegral (length ups)
+--       ldns = fromIntegral (length dns)
+--       mainRect = Rectangle x my w mh
+--         where
+--           my = y + tdh ldns
+--           mh = h - tdh ldns
+--       tops = map topRect $ [0..(lups-1)]
+--       bottoms = map bottomRect $ [0..(ldns-1)]
+--       tdh n = fromIntegral (n * decoHeight)
+--       topRect n = Rectangle x (y + tdh (ldns + 1 + n)) w (h - (tdh (ldns + 1 + n)))
+--       bottomRect n = Rectangle x (y + tdh n) w (h - tdh n)
+--       (Rectangle x y w h) = sc
 
 myLayoutHook = avoidStruts
                $ hints
@@ -205,7 +206,7 @@ myLayoutHook = avoidStruts
                $ (mkToggle (single MIRROR)
                  $ ifWider 1280 (
                    gaps defaultGaps'
-                   $ threecol ||| tiled ||| onale
+                   $ multicols ||| grido
                 )
                 stackertile
                )
@@ -216,13 +217,14 @@ myLayoutHook = avoidStruts
       nmaster = 1
       delta = 3/100
       ratio = 10/16
-      space = 10
+--      space = 10
 --      magnify = magnifiercz (12%10)
 --      rmagnify = magnifiercz (10%12)
 --      twopane = TwoPane (3/100) (1/2)
+      multicols = multiCol [1] 1 delta (-0.5)
       stackertile = StackTile nmaster delta ratio
 --      grido = SplitGrid XMonad.Layout.GridVariants.L 1 2 (2/3) (16/10) (5/100)
---      grido = Grid (16/10)
+      grido = Grid
 --      grido = centerMaster $ Grid True
 --      drawer = simpleDrawer 0.01 0.3 (ClassName "Empathy")
 --      dishes = Dishes 1 (1/8)
