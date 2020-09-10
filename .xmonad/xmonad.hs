@@ -6,7 +6,7 @@ import XMonad.Hooks.DynamicLog
 -- import XMonad.Hooks.EwmhDesktops
 import XMonad.Util.Run (spawnPipe)
 import System.IO (hPutStrLn)
-import XMonad.Layout.Accordion()
+import XMonad.Layout.Accordion
 import XMonad.Layout.Circle
 import XMonad.Layout.Roledex
 import XMonad.Layout.Dishes
@@ -23,6 +23,7 @@ import XMonad.Layout.OneBig
 import XMonad.Layout.ZoomRow
 import XMonad.Layout.PerScreen
 import XMonad.Layout.MultiColumns
+import XMonad.Layout.Renamed
 --import XMonad.Layout.GridVariants
 import XMonad.Layout.Grid
 import Data.Ratio
@@ -203,13 +204,17 @@ myLayoutHook = avoidStruts
                $ hints
                $ windowSpacing
                -- $ mkToggle (single MAGNIFICATION)
+               $ gaps defaultGaps'
                $ (mkToggle (single MIRROR)
-                 $ ifWider 1280 (
-                   gaps defaultGaps'
-                   $ multicols ||| grido
+                 $ threecolmid ||| multicols
                 )
-                stackertile
-               )
+--               $ (mkToggle (single MIRROR)
+--                 $ ifWider 1280 (
+--                   gaps defaultGaps'
+--                   $ multicols ||| grido
+--                )
+--                stackertile
+--               )
     where
       hints = layoutHints
 --      mtiled = centerMaster $ (Mirror tiled)
@@ -231,8 +236,16 @@ myLayoutHook = avoidStruts
 --      accordo = noFrillsDeco shrinkText myDWConfig (AccordStack (decoHeight myDWConfig))
 --      roofer = noFrillsDeco shrinkText myDWConfig (Roof (decoHeight myDWConfig))
       threecol = ThreeCol 1 (3/100) (1/2)
+      threecolmid = ThreeColMid 1 (3/100) (1/2)
       onale = OneBig (10/16) (10/16)
 --      zoomer = zoomRow
+--
+      named n             = renamed [(XMonad.Layout.Renamed.Replace n)]
+      trimNamed w n       = renamed [(XMonad.Layout.Renamed.CutWordsLeft w),
+                                     (XMonad.Layout.Renamed.PrependWords n)]
+      suffixed n          = renamed [(XMonad.Layout.Renamed.AppendWords n)]
+      trimSuffixed w n    = renamed [(XMonad.Layout.Renamed.CutWordsRight w),
+                                     (XMonad.Layout.Renamed.AppendWords n)]
 
 myManageHook = composeAll
     [ manageDocks
@@ -245,6 +258,7 @@ myManageHook = composeAll
      ,className =? "Unity-2d-shell" --> doIgnore
      ,className =? "Xmessage" --> doFloat
      ,className =? "Git-gui" --> doFloat
+     ,className =? "Nitrogen" --> doFloat
     ]
 
 myLogHook :: D.Client -> PP
