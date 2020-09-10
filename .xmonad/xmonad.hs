@@ -104,6 +104,7 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask,               xK_l     ), sendMessage Expand) -- %! Expand the master area
     -- , ((modMask .|. shiftMask, xK_m     ), sendMessage $ XMonad.Layout.MultiToggle.Toggle MAGNIFICATION) -- %! Magnify anything?
     , ((modMask,               xK_m     ), sendMessage $ XMonad.Layout.MultiToggle.Toggle MIRROR)
+    , ((modMask,               xK_f     ), sendMessage $ XMonad.Layout.MultiToggle.Toggle FULL)
     , ((modMask,               xK_equal ), sendMessage $ ModifyGaps gaptoggler)
 
     -- , ((modMask .|. shiftMask, xK_h     ), sendMessage zoomIn)
@@ -202,11 +203,12 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 
 myLayoutHook = avoidStruts
                $ hints
+               $ mkToggle (single FULL)
                $ windowSpacing
                -- $ mkToggle (single MAGNIFICATION)
                $ gaps defaultGaps'
                $ (mkToggle (single MIRROR)
-                 $ threecolmid ||| multicols
+                 $ threecolmid ||| multicols ||| grido
                 )
 --               $ (mkToggle (single MIRROR)
 --                 $ ifWider 1280 (
