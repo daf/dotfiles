@@ -19,11 +19,14 @@ import XMonad.Layout.Gaps
 import XMonad.Layout.Spacing
 import XMonad.Layout.DwmStyle
 import XMonad.Layout.ThreeColumns
+import Extra
 import XMonad.Layout.OneBig
 import XMonad.Layout.ZoomRow
 import XMonad.Layout.PerScreen
 import XMonad.Layout.MultiColumns
 import XMonad.Layout.Renamed
+import XMonad.Layout.LayoutScreens
+import XMonad.Layout.CenteredMaster
 --import XMonad.Layout.GridVariants
 import XMonad.Layout.Grid
 import Data.Ratio
@@ -83,6 +86,15 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask .|. shiftMask, xK_c     ), kill) -- %! Close the focused window
     , ((modMask .|. shiftMask, xK_y), spawn "firefox") -- %! Launch browser
 
+    -- multimedia
+    , ((modMask,               xK_F7), spawn "playerctl -p spotify previous")
+    , ((modMask,               xK_F8), spawn "playerctl -p spotify play-pause")
+    , ((modMask,               xK_F9), spawn "playerctl -p spotify next")
+
+    , ((modMask,               xK_F12), spawn "pactl set-sink-volume @DEFAULT_SINK@ +5%; pamixer --get-volume | xargs volnoti-show")
+    , ((modMask,               xK_F11), spawn "pactl set-sink-volume @DEFAULT_SINK@ -5%; pamixer --get-volume | xargs volnoti-show")
+    , ((modMask,               xK_F10), spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle; pamixer --get-mute && volnoti-show -m || pamixer --get-volume | xargs volnoti-show" )
+
     , ((modMask,               xK_space ), sendMessage NextLayout) -- %! Rotate through the available layout algorithms
     , ((modMask .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf) -- %!  Reset the layouts on the current workspace to default
 
@@ -121,6 +133,8 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask              , xK_comma ), sendMessage (IncMasterN 1)) -- %! Increment the number of windows in the master area
     , ((modMask              , xK_period), sendMessage (IncMasterN (-1))) -- %! Deincrement the number of windows in the master area
 
+--    , ((modMask .|. controlMask,               xK_space), layoutScreens 2 (TwoPane 0.5 0.5))
+--    , ((modMask .|. controlMask .|. shiftMask, xK_space), rescreen)
     -- toggle the status bar gap
     --    , ((modMask              , xK_b     ), modifyGap (\i n -> let x = (defaultGaps' conf ++ repeat (0,0,0,0)) !! i in if n == x then (0,0,0,0) else x)) -- %! Toggle the status bar gap
     , ((modMask              , xK_minus ), viewEmptyWorkspace)
@@ -208,7 +222,7 @@ myLayoutHook = avoidStruts
                -- $ mkToggle (single MAGNIFICATION)
                $ gaps defaultGaps'
                $ (mkToggle (single MIRROR)
-                 $ threecolmid ||| multicols ||| grido
+                 $ threecolmid ||| multicols ||| grido ||| onale
                 )
 --               $ (mkToggle (single MIRROR)
 --                 $ ifWider 1280 (
@@ -238,7 +252,7 @@ myLayoutHook = avoidStruts
 --      accordo = noFrillsDeco shrinkText myDWConfig (AccordStack (decoHeight myDWConfig))
 --      roofer = noFrillsDeco shrinkText myDWConfig (Roof (decoHeight myDWConfig))
       threecol = ThreeCol 1 (3/100) (1/2)
-      threecolmid = ThreeColMid 1 (3/100) (1/2)
+      threecolmid = ThreeKolMid 1 (3/100) (1/2)
       onale = OneBig (10/16) (10/16)
 --      zoomer = zoomRow
 --
@@ -253,13 +267,14 @@ myManageHook = composeAll
     [ manageDocks
      ,className =? "Display" --> doFloat
      -- ,className =? "Steam" --> doFloat
-     ,className =? "feh" --> doFloat 
+     ,className =? "feh" --> doFloat
      ,className =? "Eog" --> doFloat
      ,className =? "Visiblity.py" --> doIgnore
      ,className =? "Unity-2d-panel" --> doIgnore
      ,className =? "Unity-2d-shell" --> doIgnore
      ,className =? "Xmessage" --> doFloat
      ,className =? "Git-gui" --> doFloat
+     ,className =? "Toplevel" --> doFloat
      ,className =? "Nitrogen" --> doFloat
     ]
 
