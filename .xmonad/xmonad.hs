@@ -3,10 +3,11 @@
 import XMonad
 -- import XMonad.Layout.CenteredMaster
 import XMonad.Hooks.DynamicLog
--- import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.EwmhDesktops
 import XMonad.Util.Run (spawnPipe)
 import System.IO (hPutStrLn)
 import XMonad.Layout.Accordion
+import XMonad.Layout.AutoMaster
 import XMonad.Layout.Circle
 import XMonad.Layout.Roledex
 import XMonad.Layout.Dishes
@@ -19,6 +20,7 @@ import XMonad.Layout.Gaps
 import XMonad.Layout.Spacing
 import XMonad.Layout.DwmStyle
 import XMonad.Layout.ThreeColumns
+
 import Extra
 import XMonad.Layout.OneBig
 import XMonad.Layout.ZoomRow
@@ -27,8 +29,8 @@ import XMonad.Layout.MultiColumns
 import XMonad.Layout.Renamed
 import XMonad.Layout.LayoutScreens
 import XMonad.Layout.CenteredMaster
---import XMonad.Layout.GridVariants
-import XMonad.Layout.Grid
+import XMonad.Layout.GridVariants
+--import XMonad.Layout.Grid
 import Data.Ratio
 import XMonad.Layout.Drawer
 
@@ -68,9 +70,9 @@ focusedBorderColor' = "#3696ef"
 
 
 defaultGaps' :: GapSpec
-defaultGaps' = [(L, 0), (R, 0)]
+defaultGaps' = [(XMonad.Layout.Gaps.L, 0), (XMonad.Layout.Gaps.R, 0)]
 gapsOn' :: GapSpec
-gapsOn' = [(L, 400), (R, 400)] --, (D, 10) (L, 10)]
+gapsOn' = [(XMonad.Layout.Gaps.L, 400), (XMonad.Layout.Gaps.R, 400)] --, (D, 10) (L, 10)]
 
 windowSpacing = spacingRaw False (Border 0 0 0 0) False (Border 5 5 5 5) True
 
@@ -83,6 +85,7 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     [ ((modMask .|. shiftMask, xK_t), spawn $ XMonad.terminal conf) -- %! Launch terminal
     --, ((modMask,               xK_p     ), spawn "exe=`dmenu_path | dmenu` && eval \"exec $exe\"") -- %! Launch dmenu
     , ((modMask,               xK_r     ), spawn "rofi -show run") -- %! Launch rofi
+    , ((modMask .|. shiftMask, xK_e     ), spawn "nautilus --no-desktop") -- %! Launch file browser
     , ((modMask .|. shiftMask, xK_c     ), kill) -- %! Close the focused window
     , ((modMask .|. shiftMask, xK_y), spawn "firefox") -- %! Launch browser
 
@@ -130,8 +133,8 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask,               xK_s     ), withFocused (keysResizeWindow (50,50) (1,1))) -- %! biggen window
 
     -- increase or decrease number of windows in the master area
-    , ((modMask              , xK_comma ), sendMessage (IncMasterN 1)) -- %! Increment the number of windows in the master area
-    , ((modMask              , xK_period), sendMessage (IncMasterN (-1))) -- %! Deincrement the number of windows in the master area
+    , ((modMask              , xK_comma ), sendMessage (IncMasterN 1) >> sendMessage (IncMasterCols 1)) -- %! Increment the number of windows in the master area
+    , ((modMask              , xK_period), sendMessage (IncMasterN (-1)) >> sendMessage (IncMasterCols (-1))) -- %! Deincrement the number of windows in the master area
 
 --    , ((modMask .|. controlMask,               xK_space), layoutScreens 2 (TwoPane 0.5 0.5))
 --    , ((modMask .|. controlMask .|. shiftMask, xK_space), rescreen)
@@ -173,7 +176,7 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 
 -- data MAGNIFICATION = MAGNIFICATION deriving (Read, Show, Eq, Typeable)
 -- instance Transformer MAGNIFICATION Window where
---    transform _ x k = k (magnifiercz 1.2 x)
+--  transform _ x k = k (magnifiercz 1.2 x)
 
 -- attempt to fill in my own accordion style layout
 -- data AccordStack a = AccordStack Dimension deriving ( Show, Read  )
@@ -222,7 +225,7 @@ myLayoutHook = avoidStruts
                -- $ mkToggle (single MAGNIFICATION)
                $ gaps defaultGaps'
                $ (mkToggle (single MIRROR)
-                 $ threecolmid ||| multicols ||| grido ||| onale
+                 $ threecolmid ||| multicols ||| grido
                 )
 --               $ (mkToggle (single MIRROR)
 --                 $ ifWider 1280 (
@@ -237,15 +240,15 @@ myLayoutHook = avoidStruts
       tiled = Tall nmaster delta ratio
       nmaster = 1
       delta = 3/100
-      ratio = 10/16
+      ratio = 1/2
 --      space = 10
 --      magnify = magnifiercz (12%10)
 --      rmagnify = magnifiercz (10%12)
 --      twopane = TwoPane (3/100) (1/2)
       multicols = multiCol [1] 1 delta (-0.5)
       stackertile = StackTile nmaster delta ratio
---      grido = SplitGrid XMonad.Layout.GridVariants.L 1 2 (2/3) (16/10) (5/100)
-      grido = Grid
+      grido = SplitGrid XMonad.Layout.GridVariants.L 1 1 (3/8) (16/10) (5/100)
+--      grido = Grid
 --      grido = centerMaster $ Grid True
 --      drawer = simpleDrawer 0.01 0.3 (ClassName "Empathy")
 --      dishes = Dishes 1 (1/8)
@@ -253,7 +256,7 @@ myLayoutHook = avoidStruts
 --      roofer = noFrillsDeco shrinkText myDWConfig (Roof (decoHeight myDWConfig))
       threecol = ThreeCol 1 (3/100) (1/2)
       threecolmid = ThreeKolMid 1 (3/100) (1/2)
-      onale = OneBig (10/16) (10/16)
+      onale = OneBig (1/3) 1
 --      zoomer = zoomRow
 --
       named n             = renamed [(XMonad.Layout.Renamed.Replace n)]

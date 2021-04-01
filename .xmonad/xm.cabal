@@ -17,3 +17,4 @@ executable xmonad-x86_64-linux
   main-is: xmonad.hs
   ghc-options: -Wall -fno-warn-missing-signatures
   build-depends: base, xmonad, xmonad-contrib, containers, X11, dbus, utf8-string
+  other-modules: Extra
