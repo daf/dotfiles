@@ -30,6 +30,7 @@ import XMonad.Layout.Renamed
 import XMonad.Layout.LayoutScreens
 import XMonad.Layout.CenteredMaster
 import XMonad.Layout.GridVariants
+import XMonad.Layout.IfMax
 --import XMonad.Layout.Grid
 import Data.Ratio
 import XMonad.Layout.Drawer
@@ -73,6 +74,8 @@ defaultGaps' :: GapSpec
 defaultGaps' = [(XMonad.Layout.Gaps.L, 0), (XMonad.Layout.Gaps.R, 0)]
 gapsOn' :: GapSpec
 gapsOn' = [(XMonad.Layout.Gaps.L, 400), (XMonad.Layout.Gaps.R, 400)] --, (D, 10) (L, 10)]
+bigGaps' :: GapSpec
+bigGaps' = [(XMonad.Layout.Gaps.L, 1700), (XMonad.Layout.Gaps.R, 1700)]
 
 windowSpacing = spacingRaw False (Border 0 0 0 0) False (Border 5 5 5 5) True
 
@@ -225,7 +228,8 @@ myLayoutHook = avoidStruts
                -- $ mkToggle (single MAGNIFICATION)
                $ gaps defaultGaps'
                $ (mkToggle (single MIRROR)
-                 $ threecolmid ||| multicols ||| grido
+                 -- $ IfMax 2 mtiled (grido) ||| threecolmid ||| multicols
+                 $ grido ||| threecolmid ||| multicols
                 )
 --               $ (mkToggle (single MIRROR)
 --                 $ ifWider 1280 (
@@ -236,7 +240,7 @@ myLayoutHook = avoidStruts
 --               )
     where
       hints = layoutHints
---      mtiled = centerMaster $ (Mirror tiled)
+      mtiled = centerMaster $ (Mirror tiled)
       tiled = Tall nmaster delta ratio
       nmaster = 1
       delta = 3/100
@@ -246,6 +250,7 @@ myLayoutHook = avoidStruts
 --      rmagnify = magnifiercz (10%12)
 --      twopane = TwoPane (3/100) (1/2)
       multicols = multiCol [1] 1 delta (-0.5)
+      smallMultiCols = multiCol [1] 1 delta (1/3)
       stackertile = StackTile nmaster delta ratio
       grido = SplitGrid XMonad.Layout.GridVariants.L 1 1 (3/8) (16/10) (5/100)
 --      grido = Grid
@@ -279,6 +284,7 @@ myManageHook = composeAll
      ,className =? "Git-gui" --> doFloat
      ,className =? "Toplevel" --> doFloat
      ,className =? "Nitrogen" --> doFloat
+     ,title =? "Picture-in-Picture" --> doFloat
     ]
 
 myLogHook :: D.Client -> PP
@@ -300,7 +306,7 @@ main = do
     D.requestName dbus (D.busName_ "org.xmonad.Log")
       [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
 
-    xmonad $ gnomeConfig
+    xmonad $ ewmh gnomeConfig
       {
         workspaces = withScreens 2 ["a","b","c","d","e","f","g","h","i"],
         manageHook = myManageHook <+> manageHook gnomeConfig,
