@@ -31,6 +31,7 @@ import XMonad.Layout.LayoutScreens
 import XMonad.Layout.CenteredMaster
 import XMonad.Layout.GridVariants
 import XMonad.Layout.IfMax
+import qualified XMonad.Layout.Dwindle as Dwindle
 --import XMonad.Layout.Grid
 import Data.Ratio
 import XMonad.Layout.Drawer
@@ -114,6 +115,7 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 
     -- modifying the window order
     , ((modMask,               xK_Return), windows W.swapMaster) -- %! Swap the focused window and the master window
+    , ((modMask .|. shiftMask, xK_Return), windows W.shiftMaster) -- %! Shift the focused window to the master window, slide everything else down
     , ((modMask .|. shiftMask, xK_j     ), windows W.swapDown  ) -- %! Swap the focused window with the next window
     , ((modMask .|. shiftMask, xK_k     ), windows W.swapUp    ) -- %! Swap the focused window with the previous window
 
@@ -229,7 +231,7 @@ myLayoutHook = avoidStruts
                $ gaps defaultGaps'
                $ (mkToggle (single MIRROR)
                  -- $ IfMax 2 mtiled (grido) ||| threecolmid ||| multicols
-                 $ grido ||| threecolmid ||| multicols
+                 $ grido ||| threecolmid ||| multicols ||| squeezo
                 )
 --               $ (mkToggle (single MIRROR)
 --                 $ ifWider 1280 (
@@ -262,6 +264,7 @@ myLayoutHook = avoidStruts
       threecol = ThreeCol 1 (3/100) (1/2)
       threecolmid = ThreeKolMid 1 (3/100) (1/2)
       onale = OneBig (1/3) 1
+      squeezo = Dwindle.Squeeze Dwindle.R 1.5 1.1
 --      zoomer = zoomRow
 --
       named n             = renamed [(XMonad.Layout.Renamed.Replace n)]
