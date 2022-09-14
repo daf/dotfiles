@@ -4,6 +4,8 @@ import XMonad
 -- import XMonad.Layout.CenteredMaster
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops
+import XMonad.ManageHook
+import XMonad.Util.NamedScratchpad
 import XMonad.Util.Run (spawnPipe)
 import System.IO (hPutStrLn)
 import XMonad.Layout.Accordion
@@ -148,6 +150,8 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask              , xK_minus ), viewEmptyWorkspace)
     , ((modMask .|. shiftMask, xK_minus ), tagToEmptyWorkspace)
 
+    , ((modMask .|. shiftMask, xK_s     ), namedScratchpadAction scratchpads "signal")
+
     -- quit, or restart
     , ((modMask .|. shiftMask, xK_q     ), io (exitWith ExitSuccess)) -- %! Quit xmonad
     , ((modMask              , xK_q     ), restart "xmonad" True) -- %! Restart xmonad
@@ -223,6 +227,10 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 --       bottomRect n = Rectangle x (y + tdh n) w (h - tdh n)
 --       (Rectangle x y w h) = sc
 
+scratchpads = [
+  NS "signal" "signal-desktop" (title =? "Signal") (customFloating $ W.RationalRect 0.1 0.1 0.3 0.4)
+              ]
+
 myLayoutHook = avoidStruts
                $ hints
                $ mkToggle (single FULL)
@@ -231,7 +239,7 @@ myLayoutHook = avoidStruts
                $ gaps defaultGaps'
                $ (mkToggle (single MIRROR)
                  -- $ IfMax 2 mtiled (grido) ||| threecolmid ||| multicols
-                 $ grido ||| threecolmid ||| multicols ||| squeezo
+                 $ tiled ||| threecolmid ||| multicols ||| squeezo
                 )
 --               $ (mkToggle (single MIRROR)
 --                 $ ifWider 1280 (
@@ -254,7 +262,8 @@ myLayoutHook = avoidStruts
       multicols = multiCol [1] 1 delta (-0.5)
       smallMultiCols = multiCol [1] 1 delta (1/3)
       stackertile = StackTile nmaster delta ratio
-      grido = SplitGrid XMonad.Layout.GridVariants.L 1 1 (3/8) (16/10) (5/100)
+      grido = SplitGrid XMonad.Layout.GridVariants.T 1 2 (5/8) (16/10) (5/100)
+--      grido = SplitGrid XMonad.Layout.GridVariants.L 1 1 (3/8) (16/10) (5/100)
 --      grido = Grid
 --      grido = centerMaster $ Grid True
 --      drawer = simpleDrawer 0.01 0.3 (ClassName "Empathy")
@@ -288,6 +297,7 @@ myManageHook = composeAll
      ,className =? "Toplevel" --> doFloat
      ,className =? "Nitrogen" --> doFloat
      ,title =? "Picture-in-Picture" --> doFloat
+     ,namedScratchpadManageHook scratchpads
     ]
 
 myLogHook :: D.Client -> PP
